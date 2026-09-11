@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vuelostravel — Encuentra tu vuelo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
+<meta property="og:title" content="Vuelostravel — Encuentra tu vuelo">
+<meta property="og:description" content="Compara vuelos baratos y reserva directo en la aerolínea o agencia.">
+<meta name="description" content="Compara vuelos baratos y reserva directo en la aerolínea o agencia.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --blue: #2952FF;
+    --blue-dark: #1435C4;
+    --blue-pale: #EAF0FF;
+    --coral: #FF6A4D;
+    --mint: #00C2A0;
+    --mint-pale: #E3FBF6;
+    --ink: #12173B;
+    --muted: #6B7190;
+    --line: #E5E8F5;
+    --bg: #FBFBFF;
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.5;
+  }
+  h1,h2,h3{ margin: 0; }
+
+  /* HEADER / HERO */
+  header{
+    position: relative;
+    padding: 48px 20px 130px;
+    background: var(--blue);
+    overflow: hidden;
+  }
+  header::before{
+    content:'';
+    position:absolute;
+    top: -80px; right: -80px;
+    width: 340px; height: 340px;
+    background: var(--coral);
+    border-radius: 50%;
+    opacity: 0.25;
+    animation: float-a 14s ease-in-out infinite;
+  }
+  header::after{
+    content:'';
+    position:absolute;
+    bottom: -120px; left: 8%;
+    width: 260px; height: 260px;
+    background: var(--mint);
+    border-radius: 50%;
+    opacity: 0.2;
+    animation: float-b 18s ease-in-out infinite;
+  }
+  @keyframes float-a{
+    0%, 100%{ transform: translate(0, 0); }
+    50%{ transform: translate(-24px, 30px); }
+  }
+  @keyframes float-b{
+    0%, 100%{ transform: translate(0, 0); }
+    50%{ transform: translate(20px, -22px); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    header::before, header::after{ animation: none; }
+  }
+
+  .flight-path{
+    position: absolute;
+    top: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1040px;
+    max-width: calc(100% + 120px);
+    height: 120px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .flight-path svg{ width: 100%; height: 100%; }
+  .flight-path .path-line{
+    fill: none;
+    stroke: rgba(255,255,255,0.25);
+    stroke-width: 2;
+    stroke-dasharray: 6 10;
+  }
+  .flight-path .plane{
+    position: absolute;
+    top: 0; left: 0;
+    offset-path: path('M -20 90 Q 400 -10 900 70');
+    offset-rotate: auto;
+    animation: fly 16s linear infinite;
+    font-size: 26px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+  }
+  @keyframes fly{
+    0%{ offset-distance: 0%; opacity: 0; }
+    5%{ opacity: 1; }
+    95%{ opacity: 1; }
+    100%{ offset-distance: 100%; opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .flight-path{ display: none; }
+  }
+  @media (max-width: 720px){
+    .flight-path{ display: none; }
+  }
+  .header-inner{
+    max-width: 920px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .header-inner > *{
+    opacity: 0;
+    animation: rise-in 0.6s ease forwards;
+  }
+  .header-inner > .badge{ animation-delay: 0.05s; }
+  .header-inner > h1{ animation-delay: 0.15s; }
+  .header-inner > p.sub{ animation-delay: 0.25s; }
+  .header-inner > .trip-controls{ animation-delay: 0.35s; }
+  .header-inner > form#search{ animation-delay: 0.45s; }
+  @keyframes rise-in{
+    from{ opacity: 0; transform: translateY(14px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .header-inner > *{ animation: none; opacity: 1; }
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+  .badge .badge-icon{
+    display:inline-block;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%, 100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-2px) rotate(8deg); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .badge .badge-icon{ animation: none; }
+  }
+  header h1{
+    font-size: clamp(34px, 5.5vw, 52px);
+    font-weight: 800;
+    max-width: 15ch;
+    margin-bottom: 12px;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  header h1 span{ color: #FFE066; }
+  header p.sub{
+    color: rgba(255,255,255,0.85);
+    max-width: 46ch;
+    font-size: 17px;
+    margin-bottom: 32px;
+  }
+
+  form#search{
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 1fr 1fr auto;
+    gap: 12px;
+    box-shadow: 0 20px 50px rgba(20,53,196,0.25);
+  }
+  form#search.solo-ida{ grid-template-columns: 1.2fr 1.2fr 1fr auto; }
+  .trip-controls{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .trip-toggle{
+    display:inline-flex;
+    background: rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 4px;
+  }
+  .trip-toggle button{
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.75);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .trip-toggle button.active{
+    background: #fff;
+    color: var(--blue-dark);
+  }
+  .direct-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+  }
+  .direct-toggle input{ accent-color: var(--coral); width: 16px; height: 16px; }
+  .field.hidden{ display:none; }
+  form#search .field{
+    background: var(--blue-pale);
+    border-radius: 14px;
+    padding: 10px 16px;
+  }
+  form#search label{
+    display:block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue-dark);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  form#search input{
+    width:100%;
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--ink);
+  }
+  form#search input:focus{ outline: none; }
+  .autocomplete-wrapper{ position: relative; }
+  .suggestions{
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(18,23,59,0.15);
+    z-index: 20;
+    max-height: 260px;
+    overflow-y: auto;
+    display: none;
+  }
+  .suggestions.open{ display: block; }
+  .suggestion-item{
+    padding: 10px 16px;
+    cursor: pointer;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+  }
+  .suggestion-item:hover, .suggestion-item.highlighted{ background: var(--blue-pale); }
+  .suggestion-item .s-name{ color: var(--ink); font-weight: 600; }
+  .suggestion-item .s-detail{ color: var(--muted); font-size: 12px; }
+  .suggestion-item .s-code{ font-size: 12px; color: var(--blue); font-weight: 700; }
+  .explore-loading{
+    padding: 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .explore-header{
+    padding: 10px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--line);
+  }
+  .suggestion-item .s-price{ font-size: 15px; font-weight: 800; color: var(--blue-dark); }
+
+  /* DESTACADOS */
+  .featured-section{
+    max-width: 920px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+  }
+  .featured-section h2{
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .featured-section .featured-sub{
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+  .featured-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 860px){ .featured-grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px){ .featured-grid{ grid-template-columns: 1fr; } }
+  .featured-card{
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(18,23,59,0.05);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+    opacity: 0;
+    animation: card-in 0.4s ease forwards;
+  }
+  .featured-card:hover{ border-color: var(--blue); transform: translateY(-2px); }
+  .featured-card .fc-name{ font-weight: 700; color: var(--ink); font-size: 15px; margin-bottom: 2px; }
+  .featured-card .fc-country{ font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .featured-card .fc-price{ font-size: 20px; font-weight: 800; color: var(--blue-dark); }
+  .featured-card .fc-price span{ font-size: 11px; color: var(--muted); font-weight: 500; }
+  .featured-loading{ color: var(--muted); font-size: 13px; padding: 20px 0; }
+  .featured-card{ position: relative; }
+  .share-btn{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--blue-pale);
+    border: none;
+    color: var(--blue-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .share-btn:hover{ background: var(--coral); color: #fff; transform: scale(1.08); }
+  .share-btn.inline{
+    position: static;
+    width: auto;
+    height: auto;
+    border-radius: 100px;
+    padding: 8px 10px;
+    background: var(--blue-pale);
+    color: var(--blue-dark);
+  }
+  .share-btn.inline:hover{ background: var(--coral); color: #fff; }
+
+  /* WIDGET KIWI */
+  .kiwi-section{
+    max-width: 920px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+  }
+  .kiwi-card{
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 2px 14px rgba(18,23,59,0.06);
+  }
+  .kiwi-card h2{
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .kiwi-card .kiwi-sub{
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  /* BANNER SEGURO */
+  .insurance-section{
+    max-width: 920px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+  }
+  .insurance-banner{
+    background: var(--mint-pale);
+    border-radius: 20px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .insurance-banner .ins-icon{
+    font-size: 34px;
+    flex-shrink: 0;
+  }
+  .insurance-banner .ins-text{ flex: 1; min-width: 220px; }
+  .insurance-banner h3{
+    font-size: 16px;
+    font-weight: 800;
+    color: #00806a;
+    margin-bottom: 3px;
+  }
+  .insurance-banner p{
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .insurance-banner a.ins-cta{
+    text-decoration: none;
+    background: var(--mint);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 11px 22px;
+    border-radius: 100px;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+  }
+  .insurance-banner a.ins-cta:hover{ background: #00a884; }
+
+  /* MODAL AVISO LEGAL */
+  .legal-overlay{
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(18,23,59,0.55);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .legal-overlay.open{ display: flex; }
+  .legal-modal{
+    background: #fff;
+    border-radius: 20px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 32px;
+    position: relative;
+  }
+  .legal-modal h2{ font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .legal-modal h3{ font-size: 15px; font-weight: 700; margin: 22px 0 8px; }
+  .legal-modal p, .legal-modal li{ font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .legal-modal .legal-placeholder{ background: #FFF3CD; padding: 1px 5px; border-radius: 4px; color: #7a5a1e; }
+  .legal-modal .legal-close{
+    position: absolute;
+    top: 18px; right: 18px;
+    background: var(--blue-pale);
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    color: var(--blue-dark);
+    cursor: pointer;
+  }
+  .legal-modal .legal-close:hover{ background: var(--coral); color: #fff; }
+  button.cta{
+    background: var(--coral);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 0 28px;
+    font-weight: 700;
+    font-size: 16px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    align-self: stretch;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  button.cta:hover{ background: #ff8163; }
+  button.cta:active{ transform: scale(0.97); }
+
+  @media (max-width: 720px){
+    form#search{ grid-template-columns: 1fr 1fr !important; }
+    button.cta{ grid-column: 1 / -1; height: 52px; }
+  }
+
+  /* RESULTADOS */
+  main{
+    max-width: 920px;
+    margin: -70px auto 90px;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+  }
+  .results-head{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 32px 6px 16px;
+  }
+  #status{ color: var(--blue); font-weight: 700; }
+
+  .flight-card{
+    background: #fff;
+    border-radius: 18px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    box-shadow: 0 2px 14px rgba(18,23,59,0.06);
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    opacity: 0;
+    animation: card-in 0.45s ease forwards;
+  }
+  @keyframes card-in{
+    from{ opacity: 0; transform: translateY(10px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .flight-card{ animation: none; opacity: 1; }
+  }
+  .flight-card:hover{ box-shadow: 0 10px 30px rgba(41,82,255,0.12); transform: translateY(-2px); }
+  .flight-info{
+    padding: 22px 24px;
+    display:flex;
+    align-items:center;
+    gap: 26px;
+  }
+  .route{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .route .code{
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .route .arrow{
+    color: var(--blue);
+    font-size: 15px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  .flight-card:hover .route .arrow{
+    transform: translateX(6px);
+  }
+  .meta{
+    display:flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .meta .airline{ color: var(--ink); font-weight: 600; }
+  .tag{
+    display:inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    width: fit-content;
+  }
+  .tag.directo{ background: var(--mint-pale); color: #00806a; }
+  .tag.escala{ background: #FFF1E8; color: #c25022; }
+
+  .price-box{
+    background: var(--blue-pale);
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+    padding: 20px 28px;
+    min-width: 168px;
+    align-self: stretch;
+  }
+  .price{
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--blue-dark);
+  }
+  .price span{ font-size: 12px; color: var(--muted); font-weight: 500; }
+  a.book{
+    text-decoration:none;
+    color: #fff;
+    background: var(--coral);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 20px;
+    border-radius: 100px;
+    transition: background 0.15s ease;
+  }
+  a.book:hover{ background: #ff8163; }
+
+  @media (max-width: 640px){
+    .flight-card{ grid-template-columns: 1fr; }
+    .flight-info{ flex-direction:column; align-items:flex-start; gap: 12px; }
+    .price-box{ flex-direction: row; justify-content: space-between; padding: 16px 24px; }
+  }
+
+  footer{
+    text-align:center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 30px 20px 60px;
+  }
+  .affiliate-note{
+    max-width: 920px;
+    margin: 0 auto 18px;
+    padding: 0 6px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .affiliate-note a{ color: var(--blue); }
+
+  .empty-state{
+    text-align:center;
+    padding: 50px 20px;
+    color: var(--muted);
+  }
+  .empty-state .emoji{ font-size: 40px; margin-bottom: 12px; }
+  .empty-state h3{ color: var(--ink); font-size: 18px; margin-bottom: 6px; }
+
+  .spinner{
+    display:inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid var(--blue-pale);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .cookie-banner{
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    max-width: 620px;
+    margin: 0 auto;
+    background: var(--ink);
+    color: #fff;
+    padding: 18px 20px;
+    border-radius: 16px;
+    display:flex;
+    align-items:center;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    z-index: 10;
+  }
+  .cookie-banner p{ margin:0; font-size: 13px; flex: 1; min-width: 200px; color: rgba(255,255,255,0.85); }
+  .cookie-banner a{ color: #fff; text-decoration: underline; }
+  .cookie-banner button{
+    background: var(--coral);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .cookie-banner.hidden{ display:none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flight-path">
+    <svg viewBox="0 0 900 120" preserveAspectRatio="none">
+      <path class="path-line" d="M -20 90 Q 400 -10 900 70"></path>
+    </svg>
+    <span class="plane">✈️</span>
+  </div>
+  <div class="header-inner">
+    <span class="badge"><span class="badge-icon">✈️</span> vuelostravel</span>
+    <h1>Vuela a donde quieras, <span>por menos</span></h1>
+    <p class="sub">Comparamos miles de rutas al instante y te llevamos directo a la aerolínea o agencia para reservar.</p>
+
+    <div class="trip-controls">
+      <div class="trip-toggle">
+        <button type="button" id="btn-ida" class="active">Solo ida</button>
+        <button type="button" id="btn-vuelta">Ida y vuelta</button>
+      </div>
+      <label class="direct-toggle">
+        <input type="checkbox" id="onlyDirect">
+        Solo vuelos directos
+      </label>
+    </div>
+
+    <form id="search" class="solo-ida">
+      <div class="field autocomplete-wrapper">
+        <label for="origin">Origen</label>
+        <input id="origin" type="text" value="Barcelona (BCN)" autocomplete="off">
+        <input type="hidden" id="origin-code" value="BCN">
+        <div class="suggestions" id="origin-suggestions"></div>
+      </div>
+      <div class="field autocomplete-wrapper">
+        <label for="destination">Destino</label>
+        <input id="destination" type="text" value="Lisboa (LIS)" autocomplete="off">
+        <input type="hidden" id="destination-code" value="LIS">
+        <div class="suggestions" id="destination-suggestions"></div>
+      </div>
+      <div class="field">
+        <label for="date">Ida</label>
+        <input id="date" type="date">
+      </div>
+      <div class="field hidden" id="return-field">
+        <label for="returnDate">Vuelta</label>
+        <input id="returnDate" type="date">
+      </div>
+      <button type="submit" class="cta">Buscar</button>
+    </form>
+  </div>
+</header>
+
+<main>
+  <section class="featured-section">
+    <h2>Vuelos baratos desde <span id="featured-origin-name">Barcelona</span> ahora mismo</h2>
+    <p class="featured-sub">Los precios más bajos encontrados recientemente. Toca uno para buscarlo.</p>
+    <div class="featured-grid" id="featured-grid">
+      <div class="featured-loading">Cargando destinos destacados…</div>
+    </div>
+  </section>
+
+  <section class="kiwi-section">
+    <div class="kiwi-card">
+      <h2>🚆✈️ ¿Vuelo, tren o autobús?</h2>
+      <p class="kiwi-sub">Kiwi combina automáticamente distintos medios de transporte para encontrarte la opción más barata, incluso si eso significa mezclar vuelo y tren en el mismo viaje.</p>
+      <script async src="https://tpwgts.com/content?currency=eur&trs=572617&shmarker=776149&locale=es&stops=any&show_hotels=true&powered_by=true&border_radius=14&plain=true&color_button=%232952FF&color_button_text=%23ffffff&promo_id=3414&campaign_id=111" charset="utf-8"></script>
+    </div>
+  </section>
+
+  <section class="insurance-section">
+    <div class="insurance-banner">
+      <div class="ins-icon">🛡️</div>
+      <div class="ins-text">
+        <h3>¿Viaje internacional? Asegúralo desde 5€</h3>
+        <p>Cobertura médica, cancelaciones y equipaje perdido con EKTA — actívalo en un par de minutos.</p>
+      </div>
+      <a class="ins-cta" href="https://ektatraveling.tpo.li/jQBYY4by" target="_blank" rel="noopener">Ver seguros →</a>
+    </div>
+  </section>
+
+  <p class="affiliate-note">Vuelostravel puede recibir una comisión de las aerolíneas o agencias cuando reservas a través de nuestros enlaces, sin coste adicional para ti. Más info en nuestro <a href="#" onclick="abrirAvisoLegal(event)">aviso legal</a>.</p>
+
+  <div class="results-head" id="results-head-anchor">
+    <span>Resultados</span>
+    <span id="status">elige tus datos y pulsa buscar</span>
+  </div>
+
+  <div id="results"></div>
+</main>
+
+<footer>
+  Los precios se muestran a modo orientativo. La reserva se completa en la web de la aerolínea o agencia asociada.<br>
+  <a href="#" onclick="abrirAvisoLegal(event)" style="color:inherit;">Aviso legal, privacidad y cookies</a>
+</footer>
+
+<div class="cookie-banner" id="cookie-banner">
+  <p>Usamos cookies propias y de nuestros socios de viaje para medir clics y reservas, y para mejorar tu experiencia. Más info en nuestra <a href="#" onclick="abrirAvisoLegal(event)">política de cookies</a>.</p>
+  <button id="cookie-accept">Entendido</button>
+</div>
+
+<script>
+  // Llama a tu backend (server.js) ya desplegado en Render.
+  const BACKEND_URL = "https://vuelostravel-backend.onrender.com";
+  let isRoundTrip = false;
+
+  async function buscarVuelos(origin, destination, date, returnDate, onlyDirect) {
+    const params = new URLSearchParams({ origin, destination, departure_at: date });
+    if (returnDate) params.append("return_at", returnDate);
+    if (onlyDirect) params.append("direct", "true");
+    const res = await fetch(`${BACKEND_URL}/api/vuelos?${params.toString()}`);
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      throw new Error(errJson.error || "Error al buscar vuelos");
+    }
+    const { flights } = await res.json();
+    return flights.map(f => ({
+      origin: f.origin,
+      destination: f.destination,
+      airline: f.airline,
+      airlineCode: f.airline,
+      price: f.price,
+      duration: `${Math.floor(f.duration / 60)}h ${f.duration % 60}m`,
+      stops: f.transfers === 0 ? "Directo" : `${f.transfers} escala(s)`,
+      direct: f.transfers === 0,
+      date: f.departure_at,
+      returnDate: f.return_at || null,
+      bookingUrl: f.bookingUrl,
+    }));
+  }
+
+  function enlaceReserva(flight) {
+    return flight.bookingUrl;
+  }
+
+  function render(flights) {
+    const container = document.getElementById('results');
+    container.innerHTML = '';
+
+    if (flights.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">🧳</div>
+          <h3>No encontramos vuelos para estas fechas</h3>
+          <p>Prueba con otras fechas, otro aeropuerto cercano, o desactiva "solo directos".</p>
+        </div>
+      `;
+      return;
+    }
+
+    flights.forEach((f, i) => {
+      const card = document.createElement('div');
+      card.className = 'flight-card';
+      card.style.animationDelay = `${i * 0.06}s`;
+      const tagClass = f.direct ? 'directo' : 'escala';
+      card.innerHTML = `
+        <div class="flight-info">
+          <div class="route">
+            <span class="code">${f.origin}</span>
+            <span class="arrow">&#9992;</span>
+            <span class="code">${f.destination}</span>
+          </div>
+          <div class="meta">
+            <span class="airline">${f.airline} · ${f.airlineCode}</span>
+            <span>${f.duration}</span>
+            <span class="tag ${tagClass}">${f.stops}</span>
+          </div>
+        </div>
+        <div class="price-box">
+          <div class="price">${f.price}€<span> ${f.returnDate ? 'ida y vuelta' : 'ida'}</span></div>
+          <div style="display:flex; gap:8px;">
+            <button class="share-btn inline" data-share-text="Vuelo ${f.origin}→${f.destination} por ${f.price}€ (${f.stops})" title="Compartir">📤</button>
+            <a class="book" href="${enlaceReserva(f)}" target="_blank" rel="noopener">Reservar &rarr;</a>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+      card.querySelector('.share-btn').addEventListener('click', (ev) => compartir(ev.target.closest('.share-btn').dataset.shareText, ev));
+    });
+  }
+
+  async function handleSearch(e) {
+    e.preventDefault();
+    const originCode = document.getElementById('origin-code').value;
+    const destinationCode = document.getElementById('destination-code').value;
+    const statusEl = document.getElementById('status');
+
+    if (!originCode || !destinationCode) {
+      statusEl.textContent = 'elige un origen y destino de la lista de sugerencias';
+      return;
+    }
+
+    const origin = originCode.toUpperCase();
+    const destination = destinationCode.toUpperCase();
+    const date = document.getElementById('date').value;
+    const returnDate = isRoundTrip ? document.getElementById('returnDate').value : '';
+    const onlyDirect = document.getElementById('onlyDirect').checked;
+
+    if (isRoundTrip && !returnDate) {
+      statusEl.textContent = 'elige una fecha de vuelta';
+      return;
+    }
+    if (isRoundTrip && returnDate < date) {
+      statusEl.textContent = 'la vuelta no puede ser antes que la ida';
+      return;
+    }
+
+    statusEl.innerHTML = '<span class="spinner"></span>buscando…';
+    document.getElementById('results-head-anchor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    try {
+      const flights = await buscarVuelos(origin, destination, date, returnDate, onlyDirect);
+      statusEl.textContent = flights.length === 0 ? 'sin resultados' : `${flights.length} vuelos encontrados`;
+      render(flights);
+    } catch (err) {
+      statusEl.textContent = err.message || 'error al buscar';
+      document.getElementById('results').innerHTML = '';
+      console.error(err);
+    }
+  }
+
+  // --- Autocompletado de ciudades/aeropuertos ---
+  function setupAutocomplete(inputId, codeId, suggestionsId, isDestination, onSelect) {
+    const input = document.getElementById(inputId);
+    const codeInput = document.getElementById(codeId);
+    const box = document.getElementById(suggestionsId);
+    let debounceTimer;
+    let items = [];
+    let highlighted = -1;
+
+    function closeBox() {
+      box.classList.remove('open');
+      box.innerHTML = '';
+      items = [];
+      highlighted = -1;
+    }
+
+    function selectItem(item) {
+      const label = item.type === 'city' || item.type === 'airport'
+        ? `${item.cityName || item.name} (${item.code})`
+        : `${item.name} (${item.code})`;
+      input.value = label;
+      codeInput.value = item.code;
+      closeBox();
+      if (onSelect) onSelect(item);
+    }
+
+    async function exploreCountry(item) {
+      const originCode = document.getElementById('origin-code').value;
+      if (!originCode) {
+        box.innerHTML = `<div class="explore-loading">Elige primero un origen para poder explorar ${item.name}</div>`;
+        box.classList.add('open');
+        return;
+      }
+      input.value = item.name;
+      codeInput.value = '';
+      box.innerHTML = `<div class="explore-loading"><span class="spinner"></span>Buscando las ciudades más baratas en ${item.name}…</div>`;
+      box.classList.add('open');
+
+      try {
+        const params = new URLSearchParams({ origin: originCode, pais: item.name });
+        const res = await fetch(`${BACKEND_URL}/api/explorar-pais?${params.toString()}`);
+        const data = await res.json();
+        const destinos = data.destinations || [];
+
+        if (destinos.length === 0) {
+          box.innerHTML = `<div class="explore-loading">No encontramos vuelos en caché a ${item.name} desde ${originCode}. Prueba a elegir una ciudad concreta.</div>`;
+          return;
+        }
+
+        box.innerHTML = `<div class="explore-header">Ciudades más baratas en ${item.name}</div>` +
+          destinos.map((d, i) => `
+            <div class="suggestion-item" data-code="${d.code}" data-name="${d.name}">
+              <div>
+                <div class="s-name">${d.name}</div>
+                <div class="s-detail">${d.direct ? 'Vuelo directo' : 'Con escala(s)'}</div>
+              </div>
+              <div class="s-price">${d.price}€</div>
+            </div>
+          `).join('');
+
+        box.querySelectorAll('.suggestion-item').forEach(el => {
+          el.addEventListener('mousedown', (ev) => {
+            ev.preventDefault();
+            input.value = `${el.dataset.name} (${el.dataset.code})`;
+            codeInput.value = el.dataset.code;
+            closeBox();
+          });
+        });
+      } catch (err) {
+        console.error(err);
+        box.innerHTML = `<div class="explore-loading">Error al explorar ${item.name}</div>`;
+      }
+    }
+
+    function renderSuggestions() {
+      box.innerHTML = items.map((item, i) => {
+        const detail = item.type === 'airport'
+          ? `Aeropuerto · ${item.cityName || ''}`
+          : item.type === 'city'
+            ? `Ciudad · ${item.countryName || ''}`
+            : `País entero · toca para ver sus ciudades más baratas`;
+        return `
+          <div class="suggestion-item${i === highlighted ? ' highlighted' : ''}" data-index="${i}">
+            <div>
+              <div class="s-name">${item.name}</div>
+              <div class="s-detail">${detail}</div>
+            </div>
+            <div class="s-code">${item.type === 'country' ? '🔎' : item.code}</div>
+          </div>
+        `;
+      }).join('');
+      box.classList.toggle('open', items.length > 0);
+      box.querySelectorAll('.suggestion-item').forEach(el => {
+        el.addEventListener('mousedown', (ev) => {
+          ev.preventDefault();
+          const item = items[Number(el.dataset.index)];
+          if (isDestination && item.type === 'country') {
+            exploreCountry(item);
+          } else {
+            selectItem(item);
+          }
+        });
+      });
+    }
+
+    input.addEventListener('input', () => {
+      const term = input.value.trim();
+      codeInput.value = ''; // invalida el código anterior hasta que elijan uno nuevo
+      clearTimeout(debounceTimer);
+      if (term.length < 2) { closeBox(); return; }
+      debounceTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/autocomplete?term=${encodeURIComponent(term)}`);
+          const data = await res.json();
+          items = data.suggestions || [];
+          highlighted = -1;
+          renderSuggestions();
+        } catch (err) {
+          console.error(err);
+        }
+      }, 250);
+    });
+
+    input.addEventListener('keydown', (ev) => {
+      if (!items.length) return;
+      if (ev.key === 'ArrowDown') {
+        ev.preventDefault();
+        highlighted = Math.min(highlighted + 1, items.length - 1);
+        renderSuggestions();
+      } else if (ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        highlighted = Math.max(highlighted - 1, 0);
+        renderSuggestions();
+      } else if (ev.key === 'Enter') {
+        if (highlighted >= 0) {
+          ev.preventDefault();
+          const item = items[highlighted];
+          if (isDestination && item.type === 'country') {
+            exploreCountry(item);
+          } else {
+            selectItem(item);
+          }
+        }
+      } else if (ev.key === 'Escape') {
+        closeBox();
+      }
+    });
+
+    input.addEventListener('blur', () => setTimeout(closeBox, 150));
+  }
+
+  // --- Compartir un chollo ---
+  function compartir(texto, ev) {
+    if (ev) ev.stopPropagation();
+    const url = window.location.href.split('?')[0];
+    const mensaje = `${texto} ✈️ Míralo en Vuelostravel: ${url}`;
+
+    if (navigator.share) {
+      navigator.share({ text: mensaje }).catch(() => {});
+    } else {
+      const waUrl = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+      window.open(waUrl, '_blank');
+    }
+  }
+
+  setupAutocomplete('origin', 'origin-code', 'origin-suggestions', false, (item) => {
+    loadFeatured(item.code, item.cityName || item.name);
+  });
+  setupAutocomplete('destination', 'destination-code', 'destination-suggestions', true);
+
+  // --- Destinos destacados de la portada ---
+  async function loadFeatured(originCode, originName) {
+    const grid = document.getElementById('featured-grid');
+    document.getElementById('featured-origin-name').textContent = originName || originCode;
+    grid.innerHTML = '<div class="featured-loading">Cargando destinos destacados…</div>';
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/destacados?origin=${encodeURIComponent(originCode)}`);
+      const data = await res.json();
+      const destacados = data.destacados || [];
+      if (destacados.length === 0) {
+        grid.innerHTML = '<div class="featured-loading">Aún no tenemos destinos destacados para este origen.</div>';
+        return;
+      }
+      grid.innerHTML = destacados.map((d, i) => `
+        <div class="featured-card" style="animation-delay:${i * 0.05}s" data-code="${d.code}" data-name="${d.name}">
+          <button class="share-btn" data-share-text="Vuelo a ${d.name} desde ${d.price}€" title="Compartir">📤</button>
+          <div class="fc-name">${d.name}</div>
+          <div class="fc-country">${d.countryName || ''}</div>
+          <div class="fc-price">${d.price}€<span> ${d.direct ? '· directo' : ''}</span></div>
+        </div>
+      `).join('');
+      grid.querySelectorAll('.share-btn').forEach(btn => {
+        btn.addEventListener('click', (ev) => compartir(btn.dataset.shareText, ev));
+      });
+      grid.querySelectorAll('.featured-card').forEach(card => {
+        card.addEventListener('click', () => {
+          document.getElementById('destination').value = `${card.dataset.name} (${card.dataset.code})`;
+          document.getElementById('destination-code').value = card.dataset.code;
+          document.getElementById('search').requestSubmit();
+        });
+      });
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = '<div class="featured-loading">No se pudieron cargar los destacados.</div>';
+    }
+  }
+
+  // Carga inicial con el origen por defecto, y se refresca si el usuario cambia su origen.
+  loadFeatured(document.getElementById('origin-code').value, 'Barcelona');
+
+  function setTripType(roundTrip) {
+    isRoundTrip = roundTrip;
+    document.getElementById('btn-ida').classList.toggle('active', !roundTrip);
+    document.getElementById('btn-vuelta').classList.toggle('active', roundTrip);
+    document.getElementById('return-field').classList.toggle('hidden', !roundTrip);
+    document.getElementById('search').classList.toggle('solo-ida', !roundTrip);
+  }
+
+  // No permitir elegir fechas pasadas, y mantener la vuelta siempre igual o posterior a la ida.
+  const dateInput = document.getElementById('date');
+  const returnDateInput = document.getElementById('returnDate');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.min = today;
+  returnDateInput.min = today;
+  dateInput.value = today;
+  dateInput.addEventListener('change', () => {
+    returnDateInput.min = dateInput.value;
+    if (returnDateInput.value && returnDateInput.value < dateInput.value) {
+      returnDateInput.value = dateInput.value;
+    }
+  });
+
+  // Banner de cookies: se muestra una vez por sesión de navegador.
+  const cookieBanner = document.getElementById('cookie-banner');
+  document.getElementById('cookie-accept').addEventListener('click', () => {
+    cookieBanner.classList.add('hidden');
+  });
+
+  document.getElementById('btn-ida').addEventListener('click', () => setTripType(false));
+  document.getElementById('btn-vuelta').addEventListener('click', () => setTripType(true));
+  document.getElementById('search').addEventListener('submit', handleSearch);
+
+  // Estado inicial antes de la primera búsqueda (ya no lanzamos una búsqueda
+  // automática al cargar: la sección de destacados ya da contenido de entrada).
+  document.getElementById('results').innerHTML = `
+    <div class="empty-state">
+      <div class="emoji">🔎</div>
+      <h3>Elige tu ruta y fechas</h3>
+      <p>O toca cualquier destino destacado de arriba para verlo al instante.</p>
+    </div>
+  `;
+
+  // --- Modal de aviso legal ---
+  function abrirAvisoLegal(ev) {
+    if (ev) ev.preventDefault();
+    document.getElementById('legal-overlay').classList.add('open');
+  }
+  function cerrarAvisoLegal() {
+    document.getElementById('legal-overlay').classList.remove('open');
+  }
+</script>
+
+<div class="legal-overlay" id="legal-overlay" onclick="if(event.target===this) cerrarAvisoLegal()">
+  <div class="legal-modal">
+    <button class="legal-close" onclick="cerrarAvisoLegal()">✕</button>
+    <h2>Aviso legal, privacidad y cookies</h2>
+    <p>Última actualización: <span class="legal-placeholder">[fecha]</span></p>
+
+    <h3>1. Identificación del titular</h3>
+    <p>
+      En cumplimiento de la Ley de Servicios de la Sociedad de la Información (LSSI), se informa de los siguientes datos:
+      <br>Titular: Jose Alejandro Alvarado
+      <br>NIF/CIF: <span class="legal-placeholder">[tu NIF o CIF]</span>
+      <br>Domicilio: Barcelona, España
+      <br>Email de contacto: alvj321th@gmail.com
+    </p>
+
+    <h3>2. Objeto de la web</h3>
+    <p>
+      Vuelostravel es un comparador de precios de vuelos. No somos una agencia de viajes ni una aerolínea: no vendemos billetes directamente.
+      Mostramos precios orientativos obtenidos de proveedores externos (a través de la red de afiliación Travelpayouts) y, cuando el usuario
+      hace clic en "Reservar", le redirigimos a la web de la aerolínea o agencia correspondiente, donde debe completar la compra bajo las
+      condiciones y política de esa aerolínea o agencia.
+    </p>
+
+    <h3>3. Aviso de afiliación</h3>
+    <p>
+      Esta web participa en programas de afiliación de viajes (a través de Travelpayouts y sus marcas asociadas). Esto significa que podemos
+      recibir una comisión cuando un usuario completa una reserva a través de nuestros enlaces, sin que esto suponga ningún coste adicional
+      para el usuario. Esta comisión no influye en el orden en que se muestran los resultados, que se ordenan por precio.
+    </p>
+
+    <h3>4. Cookies</h3>
+    <p>Esta web utiliza cookies propias y de terceros (principalmente de Travelpayouts y sus programas asociados) para:</p>
+    <ul>
+      <li>Recordar tu visita y medir qué reservas se originan desde esta web (necesario para el pago de comisiones de afiliación).</li>
+      <li>Analizar el uso de la web con fines estadísticos <span class="legal-placeholder">[añade aquí si usas Google Analytics u otra herramienta]</span>.</li>
+    </ul>
+    <p>Puedes configurar tu navegador para bloquear o eliminar estas cookies, aunque esto puede afectar al funcionamiento de la web.</p>
+
+    <h3>5. Protección de datos</h3>
+    <p>
+      <span class="legal-placeholder">
+        [Aquí debe ir tu política de privacidad conforme al RGPD: qué datos personales recoges, con qué finalidad, base legal, plazo de
+        conservación, y cómo puede el usuario ejercer sus derechos de acceso, rectificación, supresión, etc.]
+      </span>
+    </p>
+
+    <h3>6. Limitación de responsabilidad</h3>
+    <p>
+      Los precios y disponibilidad mostrados son orientativos y proporcionados por terceros; pueden variar en el momento de la reserva final
+      en la web de la aerolínea o agencia. Vuelostravel no se hace responsable de errores, cambios de precio, cancelaciones, ni de la
+      gestión de la reserva, que corresponde íntegramente a la aerolínea o agencia con la que el usuario complete la compra.
+    </p>
+
+    <h3>7. Contacto</h3>
+    <p>Para cualquier consulta sobre este aviso legal, puedes escribir a alvj321th@gmail.com.</p>
+  </div>
+</div>
+
+</body>
+</html>
