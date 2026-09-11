@@ -8,6 +8,7 @@
 <meta property="og:title" content="Vuelostravel — Encuentra tu vuelo">
 <meta property="og:description" content="Compara vuelos baratos y reserva directo en la aerolínea o agencia.">
 <meta name="description" content="Compara vuelos baratos y reserva directo en la aerolínea o agencia.">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8590744942912233" crossorigin="anonymous"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -537,6 +538,40 @@
   }
   .insurance-banner a.ins-cta:hover{ background: #00a884; }
 
+  /* EXTRAS: eSIM, actividades, compensación */
+  .extras-section{
+    max-width: 920px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+  }
+  .extras-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 720px){ .extras-grid{ grid-template-columns: 1fr; } }
+  .extra-card{
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 2px 12px rgba(18,23,59,0.05);
+    text-align: center;
+  }
+  .extra-card .extra-icon{ font-size: 26px; margin-bottom: 8px; }
+  .extra-card h4{ font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+  .extra-card p{ font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .extra-card a{
+    display: inline-block;
+    text-decoration: none;
+    background: var(--blue-pale);
+    color: var(--blue-dark);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 100px;
+  }
+  .extra-card a:hover{ background: var(--blue); color: #fff; }
+
   /* MODAL AVISO LEGAL */
   .legal-overlay{
     display: none;
@@ -948,6 +983,29 @@
         <p>Cobertura médica, cancelaciones y equipaje perdido con EKTA — actívalo en un par de minutos.</p>
       </div>
       <a class="ins-cta" href="https://ektatraveling.tpo.li/jQBYY4by" target="_blank" rel="noopener">Ver seguros →</a>
+    </div>
+  </section>
+
+  <section class="extras-section">
+    <div class="extras-grid">
+      <div class="extra-card">
+        <div class="extra-icon">📶</div>
+        <h4>eSIM al instante</h4>
+        <p>Datos móviles en tu destino sin buscar una tienda al llegar.</p>
+        <a href="https://airalo.tpo.li/h416pBcg" target="_blank" rel="noopener">Ver eSIM →</a>
+      </div>
+      <div class="extra-card">
+        <div class="extra-icon">🎟️</div>
+        <h4>Actividades y entradas</h4>
+        <p>Reserva museos, tours y atracciones antes de llegar, sin colas.</p>
+        <a href="https://tiqets.tpo.li/3dad54zQ" target="_blank" rel="noopener">Ver actividades →</a>
+      </div>
+      <div class="extra-card">
+        <div class="extra-icon">💶</div>
+        <h4>¿Vuelo retrasado?</h4>
+        <p>Comprueba en 2 minutos si tienes derecho a compensación.</p>
+        <a href="https://airhelp.tpo.li/Hp4GQLwI" target="_blank" rel="noopener">Comprobar →</a>
+      </div>
     </div>
   </section>
 
