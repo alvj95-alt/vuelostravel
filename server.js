@@ -28,33 +28,62 @@ app.get("/api/vuelos", async (req, res) => {
     return res.status(400).json({ error: "Faltan origin y/o destination" });
   }
 
-  const params = new URLSearchParams({
-    origin,
-    destination,
-    currency: "eur",
-    sorting: "price",
-    direct: direct === "true" ? "true" : "false",
-    limit: "30",
-    page: "1",
-    one_way: return_at ? "false" : "true",
-    token: TRAVELPAYOUTS_TOKEN,
-  });
+  // Función interna para pedir precios en una fecha concreta.
+  async function buscarPorFecha(fecha) {
+    const params = new URLSearchParams({
+      origin,
+      destination,
+      currency: "eur",
+      sorting: "price",
+      direct: direct === "true" ? "true" : "false",
+      limit: "30",
+      page: "1",
+      one_way: return_at ? "false" : "true",
+      token: TRAVELPAYOUTS_TOKEN,
+    });
+    if (fecha) params.append("departure_at", fecha);
+    if (return_at) params.append("return_at", return_at);
 
-  if (departure_at) params.append("departure_at", departure_at);
-  if (return_at) params.append("return_at", return_at);
-
-  const url = `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?${params.toString()}`;
-
-  try {
+    const url = `https://api.travelpayouts.com/aviasales/v3/prices_for_dates?${params.toString()}`;
     const response = await fetch(url);
     const json = await response.json();
+    if (!json.success) return [];
+    return json.data || [];
+  }
 
-    if (!json.success) {
-      return res.status(502).json({ error: "La API de Travelpayouts devolvió un error", detail: json });
+  // Suma o resta días a una fecha en formato YYYY-MM-DD
+  function moverFecha(fechaStr, dias) {
+    const d = new Date(fechaStr + "T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() + dias);
+    return d.toISOString().split("T")[0];
+  }
+
+  try {
+    let crudos = await buscarPorFecha(departure_at);
+
+    // Si hay pocos resultados para la fecha exacta y estamos buscando solo ida
+    // (para no complicar las combinaciones de ida/vuelta), probamos también
+    // el día anterior y el siguiente, y los mezclamos.
+    if (crudos.length < 3 && departure_at && !return_at) {
+      const [antes, despues] = await Promise.all([
+        buscarPorFecha(moverFecha(departure_at, -1)),
+        buscarPorFecha(moverFecha(departure_at, 1)),
+      ]);
+      crudos = [...crudos, ...antes, ...despues];
     }
 
+    // Quitamos duplicados (misma aerolínea, mismo precio y misma hora exacta de salida)
+    const vistos = new Set();
+    const unicos = crudos.filter((f) => {
+      const clave = `${f.airline}-${f.price}-${f.departure_at}`;
+      if (vistos.has(clave)) return false;
+      vistos.add(clave);
+      return true;
+    });
+    unicos.sort((a, b) => a.price - b.price);
+
     // Añadimos a cada vuelo el enlace de reserva completo, ya con el marker de afiliado.
-    const flights = (json.data || []).map((f) => ({
+    const flights = unicos.map((f) => ({
       ...f,
       bookingUrl: `https://www.aviasales.com${f.link}&marker=${MARKER}`,
     }));
