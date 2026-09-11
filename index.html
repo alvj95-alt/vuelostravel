@@ -22,7 +22,115 @@
     --muted: #6B7190;
     --line: #E5E8F5;
     --bg: #FBFBFF;
+    --card-bg: #ffffff;
   }
+  body.dark{
+    --blue-pale: #1C2340;
+    --mint-pale: #103330;
+    --ink: #EDEFFB;
+    --muted: #9AA0C4;
+    --line: #2A3050;
+    --bg: #0E1024;
+    --card-bg: #171A34;
+  }
+  body.dark header{ background: var(--blue-dark); }
+  body.dark .kiwi-card, body.dark .flight-card, body.dark .featured-card, body.dark .skeleton-card, body.dark form#search{
+    background: var(--card-bg);
+  }
+  body.dark .legal-modal{ background: var(--card-bg); color: var(--ink); }
+  .theme-toggle{
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 15px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .theme-toggle:hover{ background: rgba(255,255,255,0.28); }
+
+  .recent-searches{
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .recent-searches .rs-label{
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    margin-right: 4px;
+  }
+  .recent-chip{
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .recent-chip:hover{ background: rgba(255,255,255,0.28); }
+
+  .calendar-link{
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .calendar-link:hover{ color: #fff; }
+
+  .cal-modal{ max-width: 520px; }
+  .cal-header{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cal-nav{
+    background: var(--blue-pale);
+    border: none;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--blue-dark);
+  }
+  .cal-nav:hover{ background: var(--blue); color: #fff; }
+  .cal-month-label{ font-weight: 800; font-size: 15px; }
+  .cal-grid{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .cal-day{
+    aspect-ratio: 1;
+    border-radius: 10px;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: #fff;
+    gap: 2px;
+  }
+  .cal-day:hover{ border-color: var(--blue); }
+  .cal-day .cal-daynum{ font-weight: 700; color: var(--ink); font-size: 13px; }
+  .cal-day .cal-price{ font-weight: 700; color: var(--blue-dark); }
+  .cal-day.cal-cheapest{ background: var(--mint-pale); border-color: var(--mint); }
+  .cal-day.cal-cheapest .cal-price{ color: #00806a; }
+  .cal-day.cal-empty{ visibility: hidden; }
+  .cal-loading{ text-align:center; padding: 30px 0; color: var(--muted); font-size: 13px; }
   *{ box-sizing: border-box; }
   body{
     margin:0;
@@ -504,7 +612,85 @@
     font-size: 14px;
     font-weight: 600;
     margin: 32px 6px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
   }
+  .results-head-right{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+  }
+  .sort-select{
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    background: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+  }
+
+  /* SKELETON LOADERS */
+  .skeleton-card{
+    background: #fff;
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .skeleton-block{
+    background: linear-gradient(90deg, #EFF1FB 25%, #F7F8FD 37%, #EFF1FB 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+    border-radius: 8px;
+  }
+  @keyframes shimmer{
+    0%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+  }
+  .skeleton-lines{ flex: 1; display:flex; flex-direction:column; gap: 10px; }
+  .skeleton-line-1{ width: 140px; height: 20px; }
+  .skeleton-line-2{ width: 200px; height: 13px; }
+  .skeleton-price{ width: 70px; height: 30px; flex-shrink: 0; }
+
+  /* BOTÓN VOLVER ARRIBA */
+  .back-to-top{
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    box-shadow: 0 6px 20px rgba(41,82,255,0.35);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .back-to-top.show{ display: flex; }
+  .back-to-top:hover{ background: var(--blue-dark); transform: translateY(-2px); }
+
+  /* LOGO AEROLÍNEA */
+  .airline-logo{
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    object-fit: contain;
+    background: var(--blue-pale);
+    flex-shrink: 0;
+  }
+  .meta .airline{ display:flex; align-items:center; gap: 8px; }
   #status{ color: var(--blue); font-weight: 700; }
 
   .flight-card{
@@ -686,7 +872,10 @@
     <span class="plane">✈️</span>
   </div>
   <div class="header-inner">
-    <span class="badge"><span class="badge-icon">✈️</span> vuelostravel</span>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span class="badge"><span class="badge-icon">✈️</span> vuelostravel</span>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTema()" title="Cambiar tema">🌙</button>
+    </div>
     <h1>Vuela a donde quieras, <span>por menos</span></h1>
     <p class="sub">Comparamos miles de rutas al instante y te llevamos directo a la aerolínea o agencia para reservar.</p>
 
@@ -698,6 +887,10 @@
       <label class="direct-toggle">
         <input type="checkbox" id="onlyDirect">
         Solo vuelos directos
+      </label>
+      <label class="direct-toggle">
+        <input type="checkbox" id="nearbyAirports">
+        Incluir aeropuertos cercanos
       </label>
     </div>
 
@@ -724,6 +917,9 @@
       </div>
       <button type="submit" class="cta">Buscar</button>
     </form>
+    <button type="button" class="calendar-link" onclick="abrirCalendarioPrecios()">📅 Ver calendario de precios del mes</button>
+
+    <div id="recent-searches" class="recent-searches"></div>
   </div>
 </header>
 
@@ -759,7 +955,14 @@
 
   <div class="results-head" id="results-head-anchor">
     <span>Resultados</span>
-    <span id="status">elige tus datos y pulsa buscar</span>
+    <div class="results-head-right">
+      <select class="sort-select" id="sort-select" onchange="reordenarResultados()">
+        <option value="price">Ordenar: precio</option>
+        <option value="duration">Ordenar: duración</option>
+        <option value="stops">Ordenar: escalas</option>
+      </select>
+      <span id="status">elige tus datos y pulsa buscar</span>
+    </div>
   </div>
 
   <div id="results"></div>
@@ -768,6 +971,8 @@
 <footer>
   Los precios se muestran a modo orientativo. La reserva se completa en la web de la aerolínea o agencia asociada.<br>
   <a href="#" onclick="abrirAvisoLegal(event)" style="color:inherit;">Aviso legal, privacidad y cookies</a>
+  ·
+  <a href="#" onclick="abrirSobreNosotros(event)" style="color:inherit;">Sobre nosotros</a>
 </footer>
 
 <div class="cookie-banner" id="cookie-banner">
@@ -780,7 +985,21 @@
   const BACKEND_URL = "https://vuelostravel-backend.onrender.com";
   let isRoundTrip = false;
 
-  async function buscarVuelos(origin, destination, date, returnDate, onlyDirect) {
+  // Aeropuertos cercanos entre sí para las principales áreas metropolitanas.
+  const AEROPUERTOS_CERCANOS = {
+    BCN: ['BCN', 'GRO', 'REU'],
+    MAD: ['MAD'],
+    LON: ['LON', 'LGW', 'STN', 'LTN', 'LCY'],
+    LHR: ['LHR', 'LGW', 'STN', 'LTN', 'LCY'],
+    PAR: ['PAR', 'ORY', 'BVA'],
+    CDG: ['CDG', 'ORY', 'BVA'],
+    MIL: ['MIL', 'BGY', 'LIN'],
+    MXP: ['MXP', 'BGY', 'LIN'],
+    NYC: ['NYC', 'JFK', 'EWR', 'LGA'],
+    ROM: ['ROM', 'CIA'],
+  };
+
+  async function buscarVuelosUnaRuta(origin, destination, date, returnDate, onlyDirect) {
     const params = new URLSearchParams({ origin, destination, departure_at: date });
     if (returnDate) params.append("return_at", returnDate);
     if (onlyDirect) params.append("direct", "true");
@@ -795,9 +1014,12 @@
       destination: f.destination,
       airline: f.airline,
       airlineCode: f.airline,
+      airlineLogo: `https://pics.avs.io/200/200/${f.airline}.png`,
       price: f.price,
       duration: `${Math.floor(f.duration / 60)}h ${f.duration % 60}m`,
+      durationMinutes: f.duration,
       stops: f.transfers === 0 ? "Directo" : `${f.transfers} escala(s)`,
+      stopsCount: f.transfers,
       direct: f.transfers === 0,
       date: f.departure_at,
       returnDate: f.return_at || null,
@@ -805,9 +1027,31 @@
     }));
   }
 
+  async function buscarVuelos(origin, destination, date, returnDate, onlyDirect, incluirCercanos) {
+    const origenes = incluirCercanos && AEROPUERTOS_CERCANOS[origin]
+      ? AEROPUERTOS_CERCANOS[origin]
+      : [origin];
+
+    const resultados = await Promise.all(
+      origenes.map(o => buscarVuelosUnaRuta(o, destination, date, returnDate, onlyDirect).catch(() => []))
+    );
+
+    // Combinamos y quitamos duplicados por aerolínea+precio+origen
+    const combinados = resultados.flat();
+    const vistos = new Set();
+    return combinados.filter(f => {
+      const clave = `${f.origin}-${f.airline}-${f.price}`;
+      if (vistos.has(clave)) return false;
+      vistos.add(clave);
+      return true;
+    });
+  }
+
   function enlaceReserva(flight) {
     return flight.bookingUrl;
   }
+
+  let ultimosResultados = [];
 
   function render(flights) {
     const container = document.getElementById('results');
@@ -837,7 +1081,7 @@
             <span class="code">${f.destination}</span>
           </div>
           <div class="meta">
-            <span class="airline">${f.airline} · ${f.airlineCode}</span>
+            <span class="airline"><img class="airline-logo" src="${f.airlineLogo}" alt="" onerror="this.style.display='none'"> ${f.airline} · ${f.airlineCode}</span>
             <span>${f.duration}</span>
             <span class="tag ${tagClass}">${f.stops}</span>
           </div>
@@ -853,6 +1097,28 @@
       container.appendChild(card);
       card.querySelector('.share-btn').addEventListener('click', (ev) => compartir(ev.target.closest('.share-btn').dataset.shareText, ev));
     });
+  }
+
+  function reordenarResultados() {
+    const criterio = document.getElementById('sort-select').value;
+    const ordenados = [...ultimosResultados];
+    if (criterio === 'price') ordenados.sort((a, b) => a.price - b.price);
+    if (criterio === 'duration') ordenados.sort((a, b) => a.durationMinutes - b.durationMinutes);
+    if (criterio === 'stops') ordenados.sort((a, b) => a.stopsCount - b.stopsCount);
+    render(ordenados);
+  }
+
+  function renderSkeleton() {
+    const container = document.getElementById('results');
+    container.innerHTML = Array(4).fill(0).map(() => `
+      <div class="skeleton-card">
+        <div class="skeleton-lines">
+          <div class="skeleton-block skeleton-line-1"></div>
+          <div class="skeleton-block skeleton-line-2"></div>
+        </div>
+        <div class="skeleton-block skeleton-price"></div>
+      </div>
+    `).join('');
   }
 
   async function handleSearch(e) {
@@ -871,6 +1137,7 @@
     const date = document.getElementById('date').value;
     const returnDate = isRoundTrip ? document.getElementById('returnDate').value : '';
     const onlyDirect = document.getElementById('onlyDirect').checked;
+    const incluirCercanos = document.getElementById('nearbyAirports').checked;
 
     if (isRoundTrip && !returnDate) {
       statusEl.textContent = 'elige una fecha de vuelta';
@@ -883,10 +1150,19 @@
 
     statusEl.innerHTML = '<span class="spinner"></span>buscando…';
     document.getElementById('results-head-anchor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    renderSkeleton();
     try {
-      const flights = await buscarVuelos(origin, destination, date, returnDate, onlyDirect);
+      const flights = await buscarVuelos(origin, destination, date, returnDate, onlyDirect, incluirCercanos);
+      ultimosResultados = flights;
+      document.getElementById('sort-select').value = 'price';
       statusEl.textContent = flights.length === 0 ? 'sin resultados' : `${flights.length} vuelos encontrados`;
       render(flights);
+      guardarBusquedaReciente(
+        document.getElementById('origin').value,
+        origin,
+        document.getElementById('destination').value,
+        destination
+      );
     } catch (err) {
       statusEl.textContent = err.message || 'error al buscar';
       document.getElementById('results').innerHTML = '';
@@ -1136,6 +1412,11 @@
   document.getElementById('btn-vuelta').addEventListener('click', () => setTripType(true));
   document.getElementById('search').addEventListener('submit', handleSearch);
 
+  // Botón "volver arriba": aparece tras bajar un poco en la página.
+  window.addEventListener('scroll', () => {
+    document.getElementById('back-to-top').classList.toggle('show', window.scrollY > 500);
+  });
+
   // Estado inicial antes de la primera búsqueda (ya no lanzamos una búsqueda
   // automática al cargar: la sección de destacados ya da contenido de entrada).
   document.getElementById('results').innerHTML = `
@@ -1154,6 +1435,146 @@
   function cerrarAvisoLegal() {
     document.getElementById('legal-overlay').classList.remove('open');
   }
+
+  // --- Modal de Sobre nosotros ---
+  function abrirSobreNosotros(ev) {
+    if (ev) ev.preventDefault();
+    document.getElementById('about-overlay').classList.add('open');
+  }
+  function cerrarSobreNosotros() {
+    document.getElementById('about-overlay').classList.remove('open');
+  }
+
+  // --- Calendario de precios ---
+  let calMesActual = null; // objeto Date del mes que se está mostrando
+
+  function abrirCalendarioPrecios() {
+    const origin = document.getElementById('origin-code').value;
+    const destination = document.getElementById('destination-code').value;
+    if (!origin || !destination) {
+      alert('Elige primero un origen y un destino de la lista de sugerencias.');
+      return;
+    }
+    document.getElementById('cal-overlay').classList.add('open');
+    const fechaBase = document.getElementById('date').value || new Date().toISOString().split('T')[0];
+    calMesActual = new Date(fechaBase + 'T00:00:00');
+    calMesActual.setDate(1);
+    cargarCalendario();
+  }
+
+  function cerrarCalendarioPrecios() {
+    document.getElementById('cal-overlay').classList.remove('open');
+  }
+
+  function cambiarMesCalendario(delta) {
+    calMesActual.setMonth(calMesActual.getMonth() + delta);
+    cargarCalendario();
+  }
+
+  async function cargarCalendario() {
+    const origin = document.getElementById('origin-code').value;
+    const destination = document.getElementById('destination-code').value;
+    const mes = `${calMesActual.getFullYear()}-${String(calMesActual.getMonth() + 1).padStart(2, '0')}`;
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    document.getElementById('cal-month-label').textContent = `${meses[calMesActual.getMonth()]} ${calMesActual.getFullYear()}`;
+
+    const grid = document.getElementById('cal-grid');
+    grid.innerHTML = '<div class="cal-loading">Cargando…</div>';
+
+    try {
+      const params = new URLSearchParams({ origin, destination, mes });
+      const res = await fetch(`${BACKEND_URL}/api/calendario?${params.toString()}`);
+      const data = await res.json();
+      const dias = data.dias || [];
+
+      if (dias.length === 0) {
+        grid.innerHTML = '<div class="cal-loading">No hay datos en caché para este mes en esta ruta. Prueba otro mes o revisa la ruta desde el buscador principal.</div>';
+        return;
+      }
+
+      const precioMinimo = Math.min(...dias.map(d => d.precio));
+      const primerDiaSemana = (calMesActual.getDay() + 6) % 7; // lunes = 0
+
+      let celdas = '';
+      for (let i = 0; i < primerDiaSemana; i++) celdas += '<div class="cal-day cal-empty"></div>';
+
+      const diasEnMes = new Date(calMesActual.getFullYear(), calMesActual.getMonth() + 1, 0).getDate();
+      for (let d = 1; d <= diasEnMes; d++) {
+        const fechaStr = `${mes}-${String(d).padStart(2, '0')}`;
+        const info = dias.find(x => x.fecha.startsWith(fechaStr));
+        if (info) {
+          const esBarato = info.precio === precioMinimo;
+          celdas += `
+            <div class="cal-day${esBarato ? ' cal-cheapest' : ''}" data-fecha="${fechaStr}">
+              <span class="cal-daynum">${d}</span>
+              <span class="cal-price">${info.precio}€</span>
+            </div>`;
+        } else {
+          celdas += `<div class="cal-day"><span class="cal-daynum">${d}</span></div>`;
+        }
+      }
+      grid.innerHTML = celdas;
+
+      grid.querySelectorAll('.cal-day[data-fecha]').forEach(el => {
+        el.addEventListener('click', () => {
+          document.getElementById('date').value = el.dataset.fecha;
+          document.getElementById('date').dispatchEvent(new Event('change'));
+          cerrarCalendarioPrecios();
+          document.getElementById('search').requestSubmit();
+        });
+      });
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = '<div class="cal-loading">Error al cargar el calendario.</div>';
+    }
+  }
+
+  // --- Tema oscuro ---
+  function toggleTema() {
+    const esOscuro = document.body.classList.toggle('dark');
+    document.getElementById('theme-toggle').textContent = esOscuro ? '☀️' : '🌙';
+    try { localStorage.setItem('vt-theme', esOscuro ? 'dark' : 'light'); } catch (e) {}
+  }
+  try {
+    if (localStorage.getItem('vt-theme') === 'dark') {
+      document.body.classList.add('dark');
+      document.getElementById('theme-toggle').textContent = '☀️';
+    }
+  } catch (e) {}
+
+  // --- Búsquedas recientes ---
+  function guardarBusquedaReciente(originLabel, originCode, destLabel, destCode) {
+    try {
+      let recientes = JSON.parse(localStorage.getItem('vt-recientes') || '[]');
+      const nueva = { originLabel, originCode, destLabel, destCode };
+      recientes = recientes.filter(r => !(r.originCode === originCode && r.destCode === destCode));
+      recientes.unshift(nueva);
+      recientes = recientes.slice(0, 5);
+      localStorage.setItem('vt-recientes', JSON.stringify(recientes));
+      renderRecientes();
+    } catch (e) {}
+  }
+
+  function renderRecientes() {
+    let recientes = [];
+    try { recientes = JSON.parse(localStorage.getItem('vt-recientes') || '[]'); } catch (e) {}
+    const box = document.getElementById('recent-searches');
+    if (recientes.length === 0) { box.innerHTML = ''; return; }
+    box.innerHTML = '<span class="rs-label">Recientes:</span>' + recientes.map((r, i) => `
+      <button type="button" class="recent-chip" data-index="${i}">${r.originCode} → ${r.destCode}</button>
+    `).join('');
+    box.querySelectorAll('.recent-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const r = recientes[Number(btn.dataset.index)];
+        document.getElementById('origin').value = r.originLabel;
+        document.getElementById('origin-code').value = r.originCode;
+        document.getElementById('destination').value = r.destLabel;
+        document.getElementById('destination-code').value = r.destCode;
+        document.getElementById('search').requestSubmit();
+      });
+    });
+  }
+  renderRecientes();
 </script>
 
 <div class="legal-overlay" id="legal-overlay" onclick="if(event.target===this) cerrarAvisoLegal()">
@@ -1213,6 +1634,45 @@
     <p>Para cualquier consulta sobre este aviso legal, puedes escribir a alvj321th@gmail.com.</p>
   </div>
 </div>
+
+<div class="legal-overlay" id="about-overlay" onclick="if(event.target===this) cerrarSobreNosotros()">
+  <div class="legal-modal">
+    <button class="legal-close" onclick="cerrarSobreNosotros()">✕</button>
+    <h2>Sobre Vuelostravel</h2>
+    <p>
+      Vuelostravel nació con una idea sencilla: comparar vuelos no debería ser complicado ni estar lleno de letra pequeña.
+      Somos un comparador independiente que rastrea precios de aerolíneas y agencias para ayudarte a encontrar el vuelo
+      que mejor se ajusta a tu viaje, sea el más barato, el más rápido o el que menos escalas tenga.
+    </p>
+    <p>
+      Detrás de esta web está Jose Alejandro Alvarado, desde Barcelona. Si tienes alguna sugerencia, encuentras algún
+      error, o simplemente quieres saludar, escríbeme a alvj321th@gmail.com — leo todos los mensajes.
+    </p>
+    <h3>Cómo nos mantenemos</h3>
+    <p>
+      Cuando reservas a través de uno de nuestros enlaces, la aerolínea o agencia nos paga una pequeña comisión, sin que
+      eso te cueste nada extra a ti. Así es como Vuelostravel se mantiene gratis para todo el mundo.
+    </p>
+  </div>
+</div>
+
+<div class="legal-overlay" id="cal-overlay" onclick="if(event.target===this) cerrarCalendarioPrecios()">
+  <div class="legal-modal cal-modal">
+    <button class="legal-close" onclick="cerrarCalendarioPrecios()">✕</button>
+    <h2>Calendario de precios</h2>
+    <p style="margin-bottom:16px;">Precio más barato encontrado para cada día, en la ruta que tengas elegida ahora mismo.</p>
+    <div class="cal-header">
+      <button class="cal-nav" onclick="cambiarMesCalendario(-1)">←</button>
+      <span class="cal-month-label" id="cal-month-label"></span>
+      <button class="cal-nav" onclick="cambiarMesCalendario(1)">→</button>
+    </div>
+    <div class="cal-grid" id="cal-grid">
+      <div class="cal-loading">Cargando…</div>
+    </div>
+  </div>
+</div>
+
+<button class="back-to-top" id="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Volver arriba">↑</button>
 
 </body>
 </html>
