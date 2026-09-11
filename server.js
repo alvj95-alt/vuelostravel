@@ -171,6 +171,47 @@ app.get("/api/destacados", async (req, res) => {
   }
 });
 
+// GET /api/calendario?origin=BCN&destination=LIS&mes=2026-10
+// Precio más barato encontrado para cada día del mes indicado.
+app.get("/api/calendario", async (req, res) => {
+  const { origin, destination, mes } = req.query;
+  if (!origin || !destination || !mes) {
+    return res.status(400).json({ error: "Faltan origin, destination y/o mes" });
+  }
+
+  try {
+    const params = new URLSearchParams({
+      origin,
+      destination,
+      depart_date: mes,
+      calendar_type: "departure_date",
+      currency: "eur",
+      token: TRAVELPAYOUTS_TOKEN,
+    });
+    const response = await fetch(`https://api.travelpayouts.com/v1/prices/calendar?${params.toString()}`);
+    const json = await response.json();
+
+    if (!json.success) {
+      return res.status(502).json({ error: "La API de Travelpayouts devolvió un error", detail: json });
+    }
+
+    // La respuesta agrupa por fecha, y dentro por número de escalas (0, 1, 2...).
+    // Nos quedamos con el precio más barato disponible para cada día.
+    const dias = Object.entries(json.data || {}).map(([fecha, porEscalas]) => {
+      const precios = Object.values(porEscalas)
+        .map((v) => (v && typeof v === "object" ? v.price : null))
+        .filter((p) => typeof p === "number");
+      const precioMinimo = precios.length ? Math.min(...precios) : null;
+      return { fecha, precio: precioMinimo };
+    }).filter((d) => d.precio !== null);
+
+    res.json({ dias });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error al obtener el calendario de precios" });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 
 // GET /api/autocomplete?term=Barcel
