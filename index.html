@@ -1053,6 +1053,14 @@
 
   let ultimosResultados = [];
 
+  function formatearFecha(fechaISO) {
+    if (!fechaISO) return '';
+    const d = new Date(fechaISO);
+    const dias = ['dom','lun','mar','mié','jue','vie','sáb'];
+    const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    return `${dias[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]}`;
+  }
+
   function render(flights) {
     const container = document.getElementById('results');
     container.innerHTML = '';
@@ -1082,7 +1090,7 @@
           </div>
           <div class="meta">
             <span class="airline"><img class="airline-logo" src="${f.airlineLogo}" alt="" onerror="this.style.display='none'"> ${f.airline} · ${f.airlineCode}</span>
-            <span>${f.duration}</span>
+            <span>📅 ${formatearFecha(f.date)} · ${f.duration}</span>
             <span class="tag ${tagClass}">${f.stops}</span>
           </div>
         </div>
