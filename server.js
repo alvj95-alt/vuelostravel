@@ -8,14 +8,8 @@ import "dotenv/config";
 
 const app = express();
 
-// ⚠️ IMPORTANTE ANTES DE PUBLICAR: ahora mismo cors() acepta peticiones desde
-// cualquier web, lo cual está bien para probar en local, pero en producción
-// cualquiera podría usar tu backend (y tu token) desde su propia página.
-// Cuando tengas tu dominio real, sustituye la línea de abajo por:
-//
-// app.use(cors({ origin: "https://tu-dominio-real.com" }));
-//
-app.use(cors());
+// Solo tu web puede llamar a este backend — protege tu token de que otros lo usen desde su propia página.
+app.use(cors({ origin: "https://vuelostravel.netlify.app" }));
 
 const TRAVELPAYOUTS_TOKEN = process.env.TRAVELPAYOUTS_TOKEN;
 const MARKER = process.env.TRAVELPAYOUTS_MARKER;
